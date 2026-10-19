@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edilgarden — Giardinaggio e Manutenzione del Verde a Roma e Provincia</title>
+<style>
+  :root {
+    --forest:      #1d3b2a;
+    --forest-deep: #14291d;
+    --moss:        #3d7a4e;
+    --leaf:        #6fae6a;
+    --leaf-soft:   #a8d49f;
+    --bark:        #2a2620;
+    --sand:        #f4f2ec;
+    --sand-warm:   #ece8de;
+    --cream:       #faf9f5;
+    --ink:         #1b211a;
+    --muted:       #6c7166;
+    --line:        #d9d6ca;
+    --gold:        #c9a24b;
+    --shadow:      rgba(20, 41, 29, 0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.65;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: var(--forest);
+  }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 30px; }
+
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--moss);
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  /* ---------- NAVBAR ---------- */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    transition: background .35s, box-shadow .35s, padding .35s;
+    padding: 22px 0;
+  }
+  header.scrolled {
+    background: rgba(250, 249, 245, 0.92);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 0 var(--line);
+    padding: 14px 0;
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; }
+  .brand {
+    display: flex; align-items: center; gap: 11px;
+    font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700;
+    color: var(--cream); letter-spacing: -0.01em; transition: color .35s;
+  }
+  header.scrolled .brand { color: var(--forest); }
+  .brand .mark {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--moss); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .brand .mark svg { width: 20px; height: 20px; color: #fff; }
+
+  .nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
+  .nav-links a {
+    text-decoration: none; color: rgba(255,255,255,0.92); font-size: 15px; font-weight: 500;
+    transition: color .25s; position: relative;
+  }
+  header.scrolled .nav-links a { color: var(--ink); }
+  .nav-links a:not(.nav-btn)::after {
+    content: ''; position: absolute; left: 0; bottom: -5px; width: 0; height: 1.5px;
+    background: var(--leaf); transition: width .25s;
+  }
+  .nav-links a:not(.nav-btn):hover::after { width: 100%; }
+  .nav-btn {
+    background: var(--moss); color: #fff !important; padding: 10px 22px;
+    border-radius: 50px; font-weight: 600; transition: background .25s, transform .25s;
+  }
+  .nav-btn:hover { background: var(--leaf); transform: translateY(-1px); }
+
+  .burger { display: none; background: none; border: none; cursor: pointer; padding: 6px; }
+  .burger span { display: block; width: 26px; height: 2px; background: #fff; margin: 5px 0; transition: .3s; }
+  header.scrolled .burger span { background: var(--forest); }
+
+  /* ---------- HERO / SLIDER ---------- */
+  .hero { position: relative; height: 100vh; min-height: 620px; overflow: hidden; background: var(--forest-deep); }
+
+  .slide {
+    position: absolute; inset: 0;
+    opacity: 0; visibility: hidden;
+    transition: opacity 1.2s ease, visibility 0s linear 1.2s;
+    overflow: hidden;
+  }
+  .slide.active { opacity: 1; visibility: visible; transition: opacity 1.2s ease, visibility 0s; }
+
+  .slide img {
+    width: 100%; height: 100%;
+    object-fit: cover;               /* riempie sempre il riquadro, niente bande nere */
+    object-position: var(--focus, center center);
+    display: block;
+    transform: scale(1.05);
+    will-change: transform;
+  }
+  .slide.active img { animation: kenburns 7.5s ease-out forwards; }
+  @keyframes kenburns { from { transform: scale(1.05); } to { transform: scale(1.13); } }
+
+  .hero::after {
+    content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background: linear-gradient(180deg, rgba(20,41,29,0.60) 0%, rgba(20,41,29,0.32) 40%, rgba(20,41,29,0.80) 100%);
+  }
+
+  .hero-content {
+    position: relative; z-index: 3; height: 100%;
+    display: flex; flex-direction: column; justify-content: center;
+    max-width: 1180px; margin: 0 auto; padding: 0 30px;
+  }
+  .hero-eyebrow {
+    color: var(--leaf-soft); font-size: 13px; letter-spacing: 0.24em; text-transform: uppercase;
+    font-weight: 700; margin-bottom: 22px;
+    opacity: 0; animation: rise .9s .2s forwards;
+  }
+  .hero h1 {
+    color: #fff; font-size: 64px; max-width: 760px; margin-bottom: 24px;
+    opacity: 0; animation: rise .9s .35s forwards;
+    text-shadow: 0 2px 30px rgba(0,0,0,0.25);
+  }
+  .hero h1 em { font-style: italic; color: var(--leaf-soft); }
+  .hero p.lead {
+    color: rgba(255,255,255,0.92); font-size: 20px; max-width: 540px; margin-bottom: 38px;
+    opacity: 0; animation: rise .9s .5s forwards;
+  }
+  .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; animation: rise .9s .65s forwards; }
+  @keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 16px 32px; border-radius: 50px; font-weight: 600; font-size: 15px;
+    text-decoration: none; cursor: pointer; border: none; transition: all .25s; font-family: inherit;
+  }
+  .btn:focus-visible { outline: 3px solid var(--leaf); outline-offset: 3px; }
+  .btn-primary { background: var(--moss); color: #fff; }
+  .btn-primary:hover { background: var(--leaf); transform: translateY(-2px); box-shadow: 0 12px 30px -10px rgba(61,122,78,0.6); }
+  .btn-light { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.4); backdrop-filter: blur(4px); }
+  .btn-light:hover { background: rgba(255,255,255,0.22); }
+  .btn-dark { background: var(--forest); color: #fff; }
+  .btn-dark:hover { background: var(--forest-deep); transform: translateY(-2px); }
+  .btn-outline { background: transparent; color: var(--forest); border: 1.5px solid var(--line); }
+  .btn-outline:hover { border-color: var(--moss); color: var(--moss); }
+  .btn svg { width: 18px; height: 18px; }
+
+  /* caption + dots */
+  .hero-caption {
+    position: absolute; bottom: 38px; left: 0; right: 0; z-index: 4;
+    max-width: 1180px; margin: 0 auto; padding: 0 30px;
+    display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  }
+  .caption-label {
+    color: #fff; font-size: 14px; font-weight: 500; letter-spacing: 0.02em;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .caption-label .idx { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--leaf-soft); }
+  .caption-label .txt { transition: opacity .4s; }
+  .dots { display: flex; gap: 10px; }
+  .dot {
+    width: 30px; height: 3px; border-radius: 3px; background: rgba(255,255,255,0.35);
+    border: none; cursor: pointer; transition: background .3s; padding: 0;
+  }
+  .dot.active { background: var(--leaf); }
+  .dot:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+
+  /* ---------- SERVICES TICKER ---------- */
+  .ticker { background: var(--forest); color: var(--cream); padding: 26px 0; overflow: hidden; }
+  .ticker-track { display: flex; gap: 56px; white-space: nowrap; animation: scroll 28s linear infinite; }
+  .ticker-track span {
+    font-family: 'Playfair Display', serif; font-size: 19px; display: inline-flex; align-items: center; gap: 56px;
+    color: var(--leaf-soft);
+  }
+  .ticker-track span::after { content: '✦'; color: var(--moss); font-size: 13px; }
+  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ---------- ABOUT ---------- */
+  section { padding: 110px 0; }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .about-img {
+    position: relative; border-radius: 6px; overflow: hidden; aspect-ratio: 4/5;
+    box-shadow: 0 30px 70px -30px var(--shadow);
+  }
+  .about-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .about-img .badge {
+    position: absolute; bottom: 24px; left: 24px; right: 24px;
+    background: rgba(250,249,245,0.95); backdrop-filter: blur(6px);
+    border-radius: 4px; padding: 20px 24px; display: flex; align-items: center; gap: 18px;
+  }
+  .badge-num { font-family: 'Playfair Display', serif; font-size: 40px; color: var(--moss); line-height: 1; }
+  .badge-txt { font-size: 14px; color: var(--ink); }
+  .about-txt h2 { font-size: 44px; margin-bottom: 22px; }
+  .about-txt p { color: var(--muted); margin-bottom: 18px; font-size: 17px; }
+  .about-txt strong { color: var(--ink); font-weight: 600; }
+  .about-features { list-style: none; margin-top: 28px; display: grid; gap: 14px; }
+  .about-features li { display: flex; gap: 13px; align-items: flex-start; font-size: 16px; }
+  .about-features svg { width: 22px; height: 22px; color: var(--moss); flex-shrink: 0; margin-top: 2px; }
+
+  /* ---------- SERVICES CARDS ---------- */
+  #servizi { background: var(--sand); }
+  .section-head { max-width: 660px; margin: 0 auto 60px; text-align: center; }
+  .section-head h2 { font-size: 46px; margin-bottom: 16px; }
+  .section-head p { color: var(--muted); font-size: 18px; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+  .card {
+    background: var(--cream); border: 1px solid var(--line); border-radius: 6px;
+    padding: 36px 30px; transition: transform .3s, box-shadow .3s; position: relative; overflow: hidden;
+  }
+  .card:hover { transform: translateY(-6px); box-shadow: 0 26px 54px -28px var(--shadow); }
+  .card-ic {
+    width: 58px; height: 58px; border-radius: 12px; background: rgba(61,122,78,0.12);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 24px;
+  }
+  .card-ic svg { width: 30px; height: 30px; color: var(--moss); }
+  .card h3 { font-size: 22px; margin-bottom: 11px; }
+  .card p { font-size: 15px; color: var(--muted); }
+
+  /* ---------- EMOTIONAL / CTA ---------- */
+  .feature-band {
+    position: relative; background:
+      linear-gradient(rgba(20,41,29,0.82), rgba(20,41,29,0.88)),
+      url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=1600&q=80') center/cover fixed;
+    color: #fff; text-align: center;
+  }
+  .feature-band h2 { color: #fff; font-size: 48px; max-width: 800px; margin: 0 auto 24px; }
+  .feature-band h2 em { font-style: italic; color: var(--leaf-soft); }
+  .feature-band p { color: rgba(255,255,255,0.88); font-size: 20px; max-width: 620px; margin: 0 auto 40px; }
+  .feature-band .btn-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+  /* ================= PREVENTIVATORE ================= */
+  #preventivo { background: var(--sand-warm); }
+
+  .perks { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 900px; margin: 0 auto; }
+  .perk {
+    background: var(--cream); border: 1px solid var(--line); border-left: 4px solid var(--moss);
+    border-radius: 6px; padding: 28px 28px 24px; position: relative;
+    display: flex; gap: 20px; align-items: flex-start;
+  }
+  .perk-ic {
+    width: 56px; height: 56px; border-radius: 50%; background: rgba(61,122,78,0.12);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .perk-ic svg { width: 30px; height: 30px; color: var(--moss); }
+  .perk h4 { font-family: 'Playfair Display', serif; font-size: 21px; color: var(--forest); margin-bottom: 6px; font-weight: 600; }
+  .perk p { font-size: 15px; color: var(--muted); }
+  .incluso {
+    position: absolute; top: -12px; right: 18px;
+    background: var(--gold); color: #2a2109; font-size: 11px; font-weight: 800;
+    letter-spacing: 0.14em; text-transform: uppercase; padding: 5px 13px; border-radius: 50px;
+    box-shadow: 0 6px 16px -6px rgba(201,162,75,0.8);
+  }
+  .measure { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 13px; font-weight: 700; color: var(--moss); letter-spacing: .04em; }
+  .measure .rule { flex: 1; height: 0; border-top: 2px dashed var(--leaf); position: relative; max-width: 120px; }
+  .measure .rule::before, .measure .rule::after {
+    content: ''; position: absolute; top: -5px; width: 2px; height: 12px; background: var(--leaf);
+  }
+  .measure .rule::before { left: 0; } .measure .rule::after { right: 0; }
+
+  .quote-open-wrap { text-align: center; margin-top: 52px; }
+  .quote-hint { font-size: 14px; color: var(--muted); margin-top: 14px; }
+
+  /* pannello dinamico */
+  #quoteApp { max-width: 1000px; margin: 46px auto 0; display: none; }
+  #quoteApp.open { display: block; animation: unfold .5s ease both; }
+  @keyframes unfold { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: translateY(0); } }
+
+  .q-panel {
+    background: var(--cream); border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    box-shadow: 0 40px 80px -46px var(--shadow);
+    display: grid; grid-template-columns: 1.15fr 0.85fr;
+  }
+  .q-form { padding: 40px 38px; }
+  .q-form h3 { font-size: 26px; margin-bottom: 6px; }
+  .q-form .q-sub { color: var(--muted); font-size: 15px; margin-bottom: 30px; }
+
+  .field { margin-bottom: 22px; }
+  .field label {
+    display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--moss); margin-bottom: 8px;
+  }
+  .field select, .field input[type="text"] {
+    width: 100%; padding: 13px 15px; border: 1.5px solid var(--line); border-radius: 6px;
+    font-family: inherit; font-size: 16px; color: var(--ink); background: #fff;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .field select:focus, .field input[type="text"]:focus {
+    outline: none; border-color: var(--moss); box-shadow: 0 0 0 3px rgba(61,122,78,0.15);
+  }
+  .field select:disabled { background: var(--sand); color: var(--muted); cursor: not-allowed; }
+  .field .help { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+  .mq-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+  .mq-value { font-family: 'Playfair Display', serif; font-size: 30px; color: var(--forest); line-height: 1; }
+  .mq-value small { font-size: 15px; color: var(--muted); font-family: 'Inter', sans-serif; margin-left: 4px; }
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 6px;
+    background: linear-gradient(to right, var(--moss) 0%, var(--moss) var(--pct,15%), var(--line) var(--pct,15%), var(--line) 100%);
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--moss); border: 4px solid var(--cream); box-shadow: 0 3px 10px rgba(20,41,29,.3); cursor: grab;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 20px; height: 20px; border-radius: 50%; background: var(--moss);
+    border: 4px solid var(--cream); box-shadow: 0 3px 10px rgba(20,41,29,.3); cursor: grab;
+  }
+  input[type="range"]:focus-visible { outline: 3px solid var(--leaf); outline-offset: 6px; }
+  .mq-scale { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 7px; }
+
+  /* codice sconto */
+  .promo {
+    margin-top: 28px; padding-top: 26px; border-top: 1px dashed var(--line);
+  }
+  .promo-row { display: flex; gap: 10px; }
+  .promo-row input {
+    flex: 1; padding: 13px 15px; border: 1.5px solid var(--line); border-radius: 6px;
+    font-family: inherit; font-size: 15px; letter-spacing: .04em; background: #fff;
+  }
+  .promo-row input:focus { outline: none; border-color: var(--moss); box-shadow: 0 0 0 3px rgba(61,122,78,0.15); }
+  .promo-row button {
+    padding: 13px 22px; border-radius: 6px; border: 1.5px solid var(--forest); background: var(--forest);
+    color: #fff; font-family: inherit; font-weight: 600; font-size: 15px; cursor: pointer; transition: background .2s;
+  }
+  .promo-row button:hover { background: var(--forest-deep); }
+  .promo-msg { font-size: 13.5px; margin-top: 9px; font-weight: 600; min-height: 20px; }
+  .promo-msg.ok { color: var(--moss); }
+  .promo-msg.ko { color: #b3462f; }
+
+  /* riepilogo */
+  .q-summary { background: var(--forest); color: #fff; padding: 40px 34px; display: flex; flex-direction: column; }
+  .q-summary h4 {
+    font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--leaf-soft);
+    font-family: 'Inter', sans-serif; font-weight: 700; margin-bottom: 22px;
+  }
+  .s-line { display: flex; justify-content: space-between; gap: 12px; font-size: 14.5px; padding: 9px 0; color: rgba(255,255,255,0.82); }
+  .s-line span:last-child { font-weight: 600; color: #fff; white-space: nowrap; }
+  .s-line.dim { color: rgba(255,255,255,0.55); font-size: 13.5px; }
+  .s-line.sconto span { color: var(--leaf-soft); }
+  .s-sep { border-top: 1px solid rgba(255,255,255,0.16); margin: 14px 0; }
+  .s-total { margin-top: auto; padding-top: 22px; }
+  .s-total .lbl { font-size: 13px; color: var(--leaf-soft); letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+  .s-old { font-size: 17px; color: rgba(255,255,255,0.55); text-decoration: line-through; margin-top: 6px; }
+  .s-amount { font-family: 'Playfair Display', serif; font-size: 46px; line-height: 1.05; color: #fff; }
+  .s-amount .per { font-family: 'Inter', sans-serif; font-size: 15px; color: var(--leaf-soft); font-weight: 500; }
+  .s-note { font-size: 12.5px; color: rgba(255,255,255,0.6); margin-top: 12px; line-height: 1.5; }
+
+  .q-actions { display: grid; gap: 10px; margin-top: 24px; }
+  .q-actions .btn { width: 100%; justify-content: center; }
+  .btn-gold { background: var(--gold); color: #241c05; }
+  .btn-gold:hover { background: #d9b463; transform: translateY(-2px); }
+  .btn-ghost { background: rgba(255,255,255,0.10); color: #fff; border: 1px solid rgba(255,255,255,0.35); }
+  .btn-ghost:hover { background: rgba(255,255,255,0.2); }
+  .q-error { color: #ffc9b8; font-size: 13.5px; margin-top: 12px; min-height: 18px; font-weight: 600; }
+
+  /* ---------- CONTACT / REVEAL ---------- */
+  #contatti { background: var(--cream); }
+  .contact-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 60px; align-items: center; }
+  .contact-txt h2 { font-size: 44px; margin-bottom: 20px; }
+  .contact-txt p { color: var(--muted); font-size: 18px; margin-bottom: 16px; }
+  .contact-txt .accent { color: var(--moss); font-weight: 600; }
+
+  .reveal-box {
+    background: var(--forest); border-radius: 8px; padding: 44px 40px; color: #fff;
+    box-shadow: 0 30px 70px -34px rgba(20,41,29,0.5);
+  }
+  .reveal-box h3 { color: #fff; font-size: 26px; margin-bottom: 8px; }
+  .reveal-box .sub { color: var(--leaf-soft); font-size: 15px; margin-bottom: 30px; }
+  .reveal-item { margin-bottom: 18px; }
+  .reveal-trigger {
+    width: 100%; display: flex; align-items: center; gap: 16px; cursor: pointer;
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 8px; padding: 18px 22px; transition: background .25s, border-color .25s;
+    font-family: inherit; color: #fff; text-align: left;
+  }
+  .reveal-trigger:hover { background: rgba(255,255,255,0.12); border-color: var(--leaf); }
+  .reveal-trigger .r-ic {
+    width: 44px; height: 44px; border-radius: 50%; background: var(--moss);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .reveal-trigger .r-ic svg { width: 22px; height: 22px; color: #fff; }
+  .reveal-trigger .r-text { flex: 1; }
+  .reveal-trigger .r-label { font-size: 13px; color: var(--leaf-soft); letter-spacing: 0.04em; }
+  .reveal-trigger .r-value { font-size: 18px; font-weight: 600; letter-spacing: 0.02em; }
+  .reveal-trigger .r-value .hidden-hint { color: rgba(255,255,255,0.55); font-weight: 400; font-size: 15px; }
+  .reveal-trigger .chev { transition: transform .25s; flex-shrink: 0; }
+  .reveal-trigger.revealed .chev { opacity: 0; }
+  .reveal-trigger.revealed { background: rgba(111,174,106,0.18); border-color: var(--leaf); }
+
+  /* ---------- FOOTER ---------- */
+  footer { background: var(--forest-deep); color: rgba(255,255,255,0.7); padding: 60px 0 32px; }
+  .foot-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 44px; margin-bottom: 44px; }
+  .foot-brand { display: flex; align-items: center; gap: 11px; font-family: 'Playfair Display', serif; font-size: 24px; color: #fff; margin-bottom: 16px; }
+  .foot-brand .mark { width: 32px; height: 32px; border-radius: 50%; background: var(--moss); display: flex; align-items: center; justify-content: center; }
+  .foot-brand .mark svg { width: 19px; height: 19px; color: #fff; }
+  footer p { font-size: 14px; max-width: 300px; }
+  .foot-col h4 { color: #fff; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; font-family: 'Inter', sans-serif; font-weight: 700; }
+  .foot-col a, .foot-col span { display: block; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; padding: 5px 0; transition: color .2s; }
+  .foot-col a:hover { color: var(--leaf-soft); }
+  .foot-bottom { border-top: 1px solid rgba(255,255,255,0.12); padding-top: 26px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 13px; }
+
+  .brand-logo { width: 60px; height: auto; max-height: 60px; object-fit: contain; display: block; flex-shrink: 0; }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 980px) {
+    .q-panel { grid-template-columns: 1fr; }
+    .q-summary { order: 2; }
+  }
+  @media (max-width: 920px) {
+    .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 44px; }
+    .cards { grid-template-columns: 1fr 1fr; }
+    .perks { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 50px; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 680px) {
+    body { font-size: 16px; }
+    .nav-links {
+      position: fixed; top: 0; right: -100%; height: 100vh; width: 78%; max-width: 320px;
+      background: var(--forest); flex-direction: column; justify-content: center; gap: 30px;
+      padding: 40px; transition: right .35s; box-shadow: -20px 0 60px rgba(0,0,0,0.3);
+    }
+    .nav-links.open { right: 0; }
+    .nav-links a { color: #fff; font-size: 19px; }
+    header.scrolled .nav-links a { color: #fff; }
+    .burger { display: block; z-index: 1100; }
+    .burger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .burger.active span:nth-child(2) { opacity: 0; }
+    .burger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    header.scrolled .burger.active span { background: #fff; }
+    .cards { grid-template-columns: 1fr; }
+    .hero { height: 88vh; min-height: 540px; }
+    .hero h1 { font-size: 38px; }
+    .hero p.lead { font-size: 18px; }
+    .hero-caption { bottom: 22px; }
+    .caption-label { font-size: 13px; }
+    .feature-band { background-attachment: scroll; }
+    section { padding: 72px 0; }
+    .about-txt h2, .contact-txt h2, .feature-band h2, .section-head h2 { font-size: 32px; }
+    .reveal-box { padding: 30px 24px; }
+    .foot-grid { grid-template-columns: 1fr; }
+    .brand-logo { width: 46px; }
+    .q-form { padding: 30px 22px; }
+    .q-summary { padding: 30px 24px; }
+    .row2 { grid-template-columns: 1fr; }
+    .s-amount { font-size: 38px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, .slide.active img { animation: none !important; }
+    .ticker-track { animation: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<header id="header">
+  <div class="wrap nav">
+    <a href="#top" class="brand">
+      <img src="img/edilgarden.jpg" alt="Logo Edilgarden" class="brand-logo">
+    </a>
+    <nav>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#chi-siamo">Chi siamo</a></li>
+        <li><a href="#servizi">Servizi</a></li>
+        <li><a href="#preventivo">Preventivatore</a></li>
+        <li><a href="#contatti">Contatti</a></li>
+        <li><a href="#preventivo" class="nav-btn">Calcola il prezzo</a></li>
+      </ul>
+    </nav>
+    <button class="burger" id="burger" aria-label="Apri menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <div class="slide active" data-label="EdilGarden">
+    <img src="img/Squadgarden.jpg" alt="La squadra Edilgarden al lavoro" style="--focus:center center">
+  </div>
+  <div class="slide" data-label="Manutenzione programmata del giardino">
+    <img src="img/manutenzione.jpg" alt="Manutenzione programmata del giardino" style="--focus:center center">
+  </div>
+  <div class="slide" data-label="Potature straordinarie">
+    <img src="img/potature strordinarie.jpg" alt="Potature straordinarie" style="--focus:center 40%">
+  </div>
+  <div class="slide" data-label="Posa di prato pronto">
+    <img src="img/posaPrato.jpg" alt="Posa di prato pronto" style="--focus:center 55%">
+  </div>
+  <div class="slide" data-label="Muratura da esterno">
+    <img src="img/muraturaEsterno.jpg" alt="Muratura da esterno" style="--focus:center center">
+  </div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Giardinaggio professionale · Roma e provincia</p>
+    <h1>Il tuo verde, <em>curato</em> come merita.</h1>
+    <p class="lead">Manutenzione, potature e nuovi impianti realizzati da operatori esperti, con un servizio personalizzato e di alta qualità.</p>
+    <div class="hero-actions">
+      <a href="#preventivo" class="btn btn-primary">Calcola il tuo abbonamento</a>
+      <a href="#servizi" class="btn btn-light">I nostri servizi</a>
+    </div>
+  </div>
+
+  <div class="hero-caption">
+    <div class="caption-label"><span class="idx" id="capIdx">01</span><span class="txt" id="capTxt">EdilGarden</span></div>
+    <div class="dots" id="dots"></div>
+  </div>
+</section>
+
+<!-- ============ TICKER ============ -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span>Tosatura</span><span>Manutenzione programmata</span><span>Potature straordinarie</span><span>Posa prato pronto</span><span>Impianti di irrigazione</span>
+    <span>Tosatura</span><span>Manutenzione programmata</span><span>Potature straordinarie</span><span>Posa prato pronto</span><span>Impianti di irrigazione</span>
+  </div>
+</div>
+
+<!-- ============ CHI SIAMO ============ -->
+<section id="chi-siamo">
+  <div class="wrap about-grid">
+    <div class="about-img">
+      <img src="img/Squadgarden.jpg" alt="Operatori Edilgarden al lavoro in un giardino">
+      <div class="badge">
+        <div class="badge-num">10+</div>
+        <div class="badge-txt"><strong>anni di esperienza</strong><br>al servizio del verde locale</div>
+      </div>
+    </div>
+    <div class="about-txt">
+      <p class="eyebrow">Chi siamo</p>
+      <h2>Una realtà locale, vicina a te.</h2>
+      <p>Edilgarden è una <strong>realtà locale</strong> che opera in tutta la zona di <strong>Roma e provincia</strong>. Offriamo un servizio di <strong>alta qualità e personalizzato</strong>, costruito attorno alle esigenze di ogni cliente e di ogni spazio verde.</p>
+      <p>Ci affidiamo a <strong>operatori con esperienza consolidata</strong>, attrezzature professionali e una conoscenza diretta del territorio: il risultato è un giardino curato nel dettaglio, in ogni stagione.</p>
+      <ul class="about-features">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Interventi su misura per privati, aziende e condomini</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Squadra qualificata e attrezzata per ogni esigenza</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Conoscenza diretta del territorio di Roma e provincia</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVIZI ============ -->
+<section id="servizi">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Cosa facciamo</p>
+      <h2>Servizi pensati per ogni giardino.</h2>
+      <p>Dalla cura ordinaria ai lavori straordinari, gestiamo ogni fase con la stessa attenzione.</p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18M3 17a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4M7 13V8m4 5V8m4 5V8"/></svg></div>
+        <h3>Tosatura</h3>
+        <p>Taglio regolare e cura del prato per un manto erboso sano, uniforme e sempre ordinato.</p>
+      </div>
+      <div class="card">
+        <div class="card-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/></svg></div>
+        <h3>Manutenzione programmata</h3>
+        <p>Un calendario di interventi su misura per mantenere il giardino curato tutto l'anno.</p>
+      </div>
+      <div class="card">
+        <div class="card-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18M6 9c4 0 6-2 6-6M6 13c5 0 8-2 8-7"/><circle cx="18" cy="6" r="2"/></svg></div>
+        <h3>Potature straordinarie</h3>
+        <p>Interventi mirati su alberi e siepi, anche in quota, per sicurezza e salute delle piante.</p>
+      </div>
+      <div class="card">
+        <div class="card-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M5 20V10l7-5 7 5v10M9 20v-6h6v6"/></svg></div>
+        <h3>Posa prato pronto</h3>
+        <p>Realizzazione di tappeti erbosi pronti all'uso, per un giardino verde fin dal primo giorno.</p>
+      </div>
+      <div class="card">
+        <div class="card-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5S12.5 4 12 2C11.5 4 10 6.9 8 8.5S5 13 5 15a7 7 0 0 0 7 7z"/></svg></div>
+        <h3>Impianti di irrigazione</h3>
+        <p>Progettazione, installazione e gestione di impianti efficienti per un'irrigazione automatica.</p>
+      </div>
+      <div class="card" style="background:var(--forest); border-color:var(--forest); display:flex; flex-direction:column; justify-content:center;">
+        <h3 style="color:#fff; margin-bottom:14px;">Non trovi quello che cerchi?</h3>
+        <p style="color:var(--leaf-soft); margin-bottom:22px;">Raccontaci il tuo progetto: troviamo la soluzione su misura.</p>
+        <a href="#contatti" class="btn btn-primary" style="align-self:flex-start;">Contattaci</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EMOTIONAL BAND ============ -->
+<section class="feature-band">
+  <div class="wrap">
+    <p class="eyebrow" style="color:var(--leaf-soft);">Il verde è una questione di cura</p>
+    <h2>Un giardino curato è uno <em>spazio in cui vivere</em> meglio.</h2>
+    <p>Dietro ogni prato in ordine e ogni pianta in salute c'è tempo, competenza e passione. Lascia che a occuparcene siamo noi: tu goditi il risultato.</p>
+    <div class="btn-row">
+      <a href="#preventivo" class="btn btn-primary">Calcola il tuo abbonamento</a>
+      <a href="#contatti" class="btn btn-light">Parla con noi</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PREVENTIVATORE ============ -->
+<section id="preventivo">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Abbonamento mensile</p>
+      <h2>Calcola il tuo canone in un minuto.</h2>
+      <p>Un canone fisso ogni mese, il giardino sempre in ordine. Ecco cosa comprende:</p>
+    </div>
+
+    <!-- Evidenza grafica di ciò che è incluso -->
+    <div class="perks">
+      <div class="perk">
+        <span class="incluso">Incluso</span>
+        <div class="perk-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 17h18M3 17a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4M7 13V8m4 5V8m4 5V8"/><circle cx="6" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/>
+          </svg>
+        </div>
+        <div>
+          <h4>Tosatura con attrezzatura professionale</h4>
+          <p>Trattorini e macchine a scoppio di categoria professionale, lame affilate a ogni intervento e raccolta dello sfalcio.</p>
+          <div class="measure" style="color:var(--gold);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Macchine e operatori nostri, sempre
+          </div>
+        </div>
+      </div>
+
+      <div class="perk">
+        <span class="incluso">Incluso</span>
+        <div class="perk-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 21v-7"/><path d="M12 14c-3.5 0-5.5-2.2-5.5-5S8.5 3 12 3s5.5 3.2 5.5 6-2 5-5.5 5z"/>
+          </svg>
+        </div>
+        <div>
+          <h4>Piccole potature di alberature</h4>
+          <p>Sfoltimenti e formatura di arbusti e piccole alberature che rientrano nell'altezza indicata qui sotto.</p>
+          <div class="measure">
+            <span>altezza</span><span class="rule"></span><span>fino a 1 m</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote-open-wrap">
+      <button class="btn btn-dark" id="openQuote" type="button" aria-expanded="false" aria-controls="quoteApp">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h4"/></svg>
+        Apri il preventivatore
+      </button>
+      <p class="quote-hint">Nessun dato viene inviato finché non sei tu a decidere.</p>
+    </div>
+
+    <!-- il preventivatore viene costruito qui via JavaScript -->
+    <div id="quoteApp" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- ============ CONTATTI / REVEAL ============ -->
+<section id="contatti">
+  <div class="wrap contact-grid">
+    <div class="contact-txt">
+      <p class="eyebrow">Contatti</p>
+      <h2>Parliamo del tuo giardino.</h2>
+      <p>Richiedi un <span class="accent">preventivo gratuito e senza impegno</span>: valutiamo insieme le tue esigenze e ti proponiamo la soluzione più adatta.</p>
+      <p>Operiamo in tutta la <span class="accent">zona di Roma e provincia</span>, con tempi di risposta rapidi e un referente sempre a tua disposizione.</p>
+    </div>
+
+    <div class="reveal-box">
+      <h3>Mettiti in contatto</h3>
+      <p class="sub">Tocca per visualizzare i recapiti</p>
+
+      <div class="reveal-item">
+        <button class="reveal-trigger" id="phoneTrigger" type="button">
+          <span class="r-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+          <span class="r-text">
+            <span class="r-label">Telefono</span>
+            <span class="r-value" id="phoneValue"><span class="hidden-hint">Tocca per mostrare</span></span>
+          </span>
+          <svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      <div class="reveal-item">
+        <button class="reveal-trigger" id="emailTrigger" type="button">
+          <span class="r-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></span>
+          <span class="r-text">
+            <span class="r-label">Email</span>
+            <span class="r-value" id="emailValue"><span class="hidden-hint">Tocca per mostrare</span></span>
+          </span>
+          <svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      <a href="#" class="btn btn-primary" id="quoteBtn" style="width:100%; justify-content:center; margin-top:10px;">Richiedi preventivo gratuito</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand"><span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c0-6 0-10 5-14-7 0-9 4-9 8m4-2c-4 0-6 3-6 6"/><path d="M12 22V8"/></svg></span>Edilgarden</div>
+        <p>Giardinaggio e manutenzione del verde a Roma e provincia. Servizio personalizzato, operatori esperti, risultati che durano.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Servizi</h4>
+        <a href="#servizi">Tosatura</a>
+        <a href="#servizi">Manutenzione programmata</a>
+        <a href="#servizi">Potature straordinarie</a>
+        <a href="#servizi">Posa prato pronto</a>
+        <a href="#servizi">Impianti di irrigazione</a>
+      </div>
+      <div class="foot-col">
+        <h4>Contatti</h4>
+        <a href="#preventivo">Calcola il canone mensile</a>
+        <a href="#contatti">Richiedi preventivo</a>
+        <span>Roma e provincia</span>
+        <span>Lun–Sab, 8:00–18:00</span>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© <span id="year"></span> Edilgarden — Tutti i diritti riservati</span>
+    </div>
+  </div>
+</footer>
+
+<!-- libreria per la generazione del PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+/* ============================================================
+   CONFIG — modifica qui i parametri commerciali
+   ============================================================ */
+const PHONE        = '+39 388 251 2198';
+const EMAIL        = 'info@edilgarden.it';        // contatti generici
+const EMAIL_QUOTE  = 'info@edilgardentsl.it';     // destinatario preventivi
+
+const CFG = {
+  chiamata:   50,            // diritto fisso di chiamata (€)
+  prezzoMq:   2,             // € per metro quadro
+  maggiorazione: 0.15,       // +15% fuori zona base
+  sconto:     0.10,          // 10% con codice promozionale
+  codice:     'RLGARDEN10',  // confronto case-insensitive
+  mqMin:      5,
+  mqMax:      999,
+  // comuni SENZA maggiorazione (zona operativa base)
+  zonaBase:   ['Ardea', 'Pomezia', 'Aprilia', 'Anzio', 'Nettuno']
+};
+
+/* ============================================================
+   COMUNI DEL LAZIO per provincia
+   ============================================================ */
+const COMUNI = {
+  "Roma": "Affile,Agosta,Albano Laziale,Allumiere,Anguillara Sabazia,Anticoli Corrado,Anzio,Arcinazzo Romano,Ardea,Ariccia,Arsoli,Artena,Bellegra,Bracciano,Camerata Nuova,Campagnano di Roma,Canale Monterano,Canterano,Capena,Capranica Prenestina,Carpineto Romano,Casape,Castel Gandolfo,Castel Madama,Castel San Pietro Romano,Castelnuovo di Porto,Cave,Cerreto Laziale,Cervara di Roma,Cerveteri,Ciampino,Ciciliano,Cineto Romano,Civitavecchia,Civitella San Paolo,Colleferro,Colonna,Fiano Romano,Filacciano,Fiumicino,Fonte Nuova,Formello,Frascati,Gallicano nel Lazio,Gavignano,Genazzano,Genzano di Roma,Gerano,Gorga,Grottaferrata,Guidonia Montecelio,Jenne,Labico,Ladispoli,Lanuvio,Lariano,Licenza,Magliano Romano,Mandela,Manziana,Marano Equo,Marcellina,Marino,Mazzano Romano,Mentana,Monte Compatri,Monte Porzio Catone,Monteflavio,Montelanico,Montelibretti,Monterotondo,Montorio Romano,Moricone,Morlupo,Nazzano,Nemi,Nerola,Nettuno,Olevano Romano,Palestrina,Palombara Sabina,Percile,Pisoniano,Poli,Pomezia,Ponzano Romano,Riano,Rignano Flaminio,Riofreddo,Rocca Canterano,Rocca di Cave,Rocca di Papa,Rocca Priora,Rocca Santo Stefano,Roccagiovine,Roiate,Roma,Roviano,Sacrofano,Sambuci,San Cesareo,San Gregorio da Sassola,San Polo dei Cavalieri,San Vito Romano,Sant'Angelo Romano,Sant'Oreste,Santa Marinella,Saracinesco,Segni,Subiaco,Tivoli,Tolfa,Torrita Tiberina,Trevignano Romano,Vallepietra,Vallinfreda,Valmontone,Velletri,Vicovaro,Vivaro Romano,Zagarolo",
+  "Latina": "Aprilia,Bassiano,Campodimele,Castelforte,Cisterna di Latina,Cori,Fondi,Formia,Gaeta,Itri,Latina,Lenola,Maenza,Minturno,Monte San Biagio,Norma,Pontinia,Ponza,Priverno,Prossedi,Rocca Massima,Roccagorga,Roccasecca dei Volsci,Sabaudia,San Felice Circeo,Santi Cosma e Damiano,Sermoneta,Sezze,Sonnino,Sperlonga,Spigno Saturnia,Terracina,Ventotene",
+  "Frosinone": "Acquafondata,Acuto,Alatri,Alvito,Amaseno,Anagni,Aquino,Arce,Arnara,Arpino,Atina,Ausonia,Belmonte Castello,Boville Ernica,Broccostella,Campoli Appennino,Casalattico,Casalvieri,Cassino,Castelliri,Castelnuovo Parano,Castro dei Volsci,Castrocielo,Ceccano,Ceprano,Cervaro,Colfelice,Colle San Magno,Collepardo,Coreno Ausonio,Esperia,Falvaterra,Ferentino,Filettino,Fiuggi,Fontana Liri,Fontechiari,Frosinone,Fumone,Gallinaro,Giuliano di Roma,Guarcino,Isola del Liri,Monte San Giovanni Campano,Morolo,Paliano,Pastena,Patrica,Pescosolido,Picinisco,Pico,Piedimonte San Germano,Piglio,Pignataro Interamna,Pofi,Pontecorvo,Posta Fibreno,Ripi,Rocca d'Arce,Roccasecca,San Biagio Saracinisco,San Donato Val di Comino,San Giorgio a Liri,San Giovanni Incarico,San Vittore del Lazio,Sant'Ambrogio sul Garigliano,Sant'Andrea del Garigliano,Sant'Apollinare,Sant'Elia Fiumerapido,Santopadre,Serrone,Settefrati,Sgurgola,Sora,Strangolagalli,Supino,Terelle,Torre Cajetani,Torrice,Trevi nel Lazio,Trivigliano,Vallecorsa,Vallemaio,Vallerotonda,Veroli,Vicalvi,Vico nel Lazio,Villa Latina,Villa Santa Lucia,Villa Santo Stefano,Viticuso",
+  "Rieti": "Accumoli,Amatrice,Antrodoco,Ascrea,Belmonte in Sabina,Borbona,Borgo Velino,Borgorose,Cantalice,Cantalupo in Sabina,Casaprota,Casperia,Castel di Tora,Castel Sant'Angelo,Castelnuovo di Farfa,Cittaducale,Cittareale,Collalto Sabino,Colle di Tora,Collegiove,Collevecchio,Colli sul Velino,Concerviano,Configni,Contigliano,Cottanello,Fara in Sabina,Fiamignano,Forano,Frasso Sabino,Greccio,Labro,Leonessa,Longone Sabino,Magliano Sabina,Marcetelli,Micigliano,Mompeo,Montasola,Montebuono,Monte San Giovanni in Sabina,Monteleone Sabino,Montenero Sabino,Montopoli di Sabina,Morro Reatino,Nespolo,Orvinio,Paganico Sabino,Pescorocchiano,Petrella Salto,Poggio Bustone,Poggio Catino,Poggio Mirteto,Poggio Moiano,Poggio Nativo,Poggio San Lorenzo,Posta,Pozzaglia Sabina,Rieti,Rivodutri,Rocca Sinibalda,Roccantica,Salisano,Scandriglia,Selci,Stimigliano,Tarano,Toffia,Torri in Sabina,Torricella in Sabina,Turania,Vacone,Varco Sabino",
+  "Viterbo": "Acquapendente,Arlena di Castro,Bagnoregio,Barbarano Romano,Bassano Romano,Bassano in Teverina,Blera,Bolsena,Bomarzo,Calcata,Canepina,Canino,Capodimonte,Capranica,Caprarola,Carbognano,Castel Sant'Elia,Castiglione in Teverina,Celleno,Cellere,Civita Castellana,Civitella d'Agliano,Corchiano,Fabrica di Roma,Faleria,Farnese,Gallese,Gradoli,Graffignano,Grotte di Castro,Ischia di Castro,Latera,Lubriano,Marta,Montalto di Castro,Monte Romano,Montefiascone,Monterosi,Nepi,Onano,Oriolo Romano,Orte,Piansano,Proceno,Ronciglione,San Lorenzo Nuovo,Soriano nel Cimino,Sutri,Tarquinia,Tessennano,Tuscania,Valentano,Vallerano,Vasanello,Vejano,Vetralla,Vignanello,Villa San Giovanni in Tuscia,Viterbo,Vitorchiano"
+};
+
+/* ---------- Navbar scroll ---------- */
+const header = document.getElementById('header');
+const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 40);
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ---------- Mobile menu ---------- */
+const burger = document.getElementById('burger');
+const navLinks = document.getElementById('navLinks');
+burger.addEventListener('click', () => {
+  burger.classList.toggle('active');
+  navLinks.classList.toggle('open');
+});
+navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  burger.classList.remove('active');
+  navLinks.classList.remove('open');
+}));
+
+/* ---------- Hero carousel ---------- */
+const slides = Array.from(document.querySelectorAll('.slide'));
+const dotsWrap = document.getElementById('dots');
+const capIdx = document.getElementById('capIdx');
+const capTxt = document.getElementById('capTxt');
+let current = 0, timer;
+
+slides.forEach((s, i) => {
+  const d = document.createElement('button');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.setAttribute('aria-label', 'Vai alla slide ' + (i + 1));
+  d.addEventListener('click', () => { goTo(i); resetTimer(); });
+  dotsWrap.appendChild(d);
+});
+const dots = Array.from(dotsWrap.children);
+
+function goTo(n) {
+  slides[current].classList.remove('active');
+  dots[current].classList.remove('active');
+  current = (n + slides.length) % slides.length;
+  slides[current].classList.add('active');
+  dots[current].classList.add('active');
+  capIdx.textContent = String(current + 1).padStart(2, '0');
+  capTxt.style.opacity = 0;
+  setTimeout(() => {
+    capTxt.textContent = slides[current].dataset.label;
+    capTxt.style.opacity = 1;
+  }, 250);
+}
+function next() { goTo(current + 1); }
+function resetTimer() { clearInterval(timer); timer = setInterval(next, 5500); }
+resetTimer();
+
+/* ---------- Reveal contatti ---------- */
+function reveal(triggerId, valueId, value, href) {
+  const trigger = document.getElementById(triggerId);
+  const valueEl = document.getElementById(valueId);
+  let shown = false;
+  trigger.addEventListener('click', () => {
+    if (!shown) {
+      valueEl.textContent = value;
+      trigger.classList.add('revealed');
+      shown = true;
+    } else {
+      window.location.href = href;
+    }
+  });
+}
+reveal('phoneTrigger', 'phoneValue', PHONE, 'tel:' + PHONE.replace(/\s/g, ''));
+reveal('emailTrigger', 'emailValue', EMAIL, 'mailto:' + EMAIL);
+
+document.getElementById('quoteBtn').addEventListener('click', (e) => {
+  e.preventDefault();
+  const subject = encodeURIComponent('Richiesta preventivo - Edilgarden');
+  const body = encodeURIComponent('Salve,\nvorrei richiedere un preventivo per il seguente intervento:\n\n- Servizio: \n- Luogo (Roma/provincia): \n- Descrizione: \n\nGrazie.');
+  window.location.href = 'mailto:' + EMAIL + '?subject=' + subject + '&body=' + body;
+});
+
+
+/* ============================================================
+   PREVENTIVATORE — costruito dinamicamente al primo click
+   ============================================================ */
+const euro = n => n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+
+const QuoteApp = (() => {
+  let built = false;
+  let scontoAttivo = false;
+  let el = {};
+
+  const container = document.getElementById('quoteApp');
+
+  const template = `
+    <div class="q-panel">
+      <div class="q-form">
+        <h3>Il tuo canone mensile</h3>
+        <p class="q-sub">Compila i campi: il preventivo si aggiorna mentre scrivi.</p>
+
+        <div class="row2">
+          <div class="field">
+            <label for="qProv">Provincia</label>
+            <select id="qProv">
+              <option value="">Seleziona…</option>
+              ${Object.keys(COMUNI).map(p => `<option value="${p}">${p}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field">
+            <label for="qCom">Comune</label>
+            <select id="qCom" disabled><option value="">Prima scegli la provincia</option></select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="qInd">Indirizzo dell'intervento</label>
+          <input type="text" id="qInd" maxlength="100" placeholder="Via, numero civico…" autocomplete="street-address">
+          <p class="help"><span id="qIndCount">0</span>/100 caratteri</p>
+        </div>
+
+        <div class="field">
+          <div class="mq-head">
+            <label for="qMq" style="margin:0;">Superficie del prato</label>
+            <span class="mq-value" id="qMqOut">150<small>m²</small></span>
+          </div>
+          <input type="range" id="qMq" min="${CFG.mqMin}" max="${CFG.mqMax}" step="1" value="150"
+                 aria-label="Metri quadri di prato">
+          <div class="mq-scale"><span>${CFG.mqMin} m²</span><span>${CFG.mqMax} m²</span></div>
+        </div>
+
+        <div class="promo">
+          <div class="field" style="margin-bottom:0;">
+            <label for="qCode">Hai un codice sconto?</label>
+            <div class="promo-row">
+              <input type="text" id="qCode" placeholder="Inserisci il codice" maxlength="20" autocapitalize="characters" spellcheck="false">
+              <button type="button" id="qCodeBtn">Applica</button>
+            </div>
+            <p class="promo-msg" id="qCodeMsg"></p>
+          </div>
+        </div>
+      </div>
+
+      <aside class="q-summary">
+        <h4>Riepilogo preventivo</h4>
+        <div class="s-line"><span>Diritto fisso di chiamata</span><span>${euro(CFG.chiamata)}</span></div>
+        <div class="s-line"><span id="qLineMq">Superficie 150 m² × ${euro(CFG.prezzoMq)}/m²</span><span id="qValMq">300,00 €</span></div>
+        <div class="s-line dim" id="qLineZona"><span>Maggiorazione zona (15%)</span><span id="qValZona">—</span></div>
+        <div class="s-sep"></div>
+        <div class="s-line sconto" id="qLineSconto" style="display:none;"><span>Sconto codice promozionale (10%)</span><span id="qValSconto">—</span></div>
+
+        <div class="s-total">
+          <div class="lbl">Canone mensile</div>
+          <div class="s-old" id="qOld" style="display:none;"></div>
+          <div class="s-amount" id="qTotal">—<span class="per"> /mese</span></div>
+          <p class="s-note">Stima indicativa e non vincolante. L'importo definitivo viene confermato dopo il sopralluogo gratuito.</p>
+
+          <div class="q-actions">
+            <button type="button" class="btn btn-gold" id="qPdf">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Salva il preventivo in PDF
+            </button>
+            <button type="button" class="btn btn-ghost" id="qMail">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+              Invia il preventivo per email
+            </button>
+          </div>
+          <p class="q-error" id="qErr"></p>
+        </div>
+      </aside>
+    </div>
+  `;
+
+  /* ---- calcolo ---- */
+  function calcola() {
+    const mq      = parseInt(el.mq.value, 10);
+    const comune  = el.com.value;
+    const zonaBase = CFG.zonaBase.includes(comune);
+    const superficie = mq * CFG.prezzoMq;
+    const imponibile = CFG.chiamata + superficie;
+    const magg    = (comune && !zonaBase) ? imponibile * CFG.maggiorazione : 0;
+    const pieno   = imponibile + magg;
+    const sconto  = scontoAttivo ? pieno * CFG.sconto : 0;
+    const finale  = pieno - sconto;
+    return { mq, comune, zonaBase, superficie, imponibile, magg, pieno, sconto, finale };
+  }
+
+  function aggiorna() {
+    const r = calcola();
+
+    el.mqOut.innerHTML = r.mq + '<small>m²</small>';
+    el.mq.style.setProperty('--pct', ((r.mq - CFG.mqMin) / (CFG.mqMax - CFG.mqMin) * 100) + '%');
+
+    el.lineMq.textContent = 'Superficie ' + r.mq + ' m² × ' + euro(CFG.prezzoMq) + '/m²';
+    el.valMq.textContent  = euro(r.superficie);
+
+    if (!r.comune) {
+      el.lineZona.classList.add('dim');
+      el.valZona.textContent = 'seleziona il comune';
+    } else if (r.zonaBase) {
+      el.lineZona.classList.add('dim');
+      el.lineZona.firstElementChild.textContent = 'Zona operativa base — ' + r.comune;
+      el.valZona.textContent = 'nessuna maggiorazione';
+    } else {
+      el.lineZona.classList.remove('dim');
+      el.lineZona.firstElementChild.textContent = 'Maggiorazione zona (15%)';
+      el.valZona.textContent = '+ ' + euro(r.magg);
+    }
+
+    if (scontoAttivo) {
+      el.lineSconto.style.display = 'flex';
+      el.valSconto.textContent = '− ' + euro(r.sconto);
+      el.old.style.display = 'block';
+      el.old.textContent = euro(r.pieno);
+    } else {
+      el.lineSconto.style.display = 'none';
+      el.old.style.display = 'none';
+    }
+
+    el.total.innerHTML = euro(r.finale) + '<span class="per"> /mese</span>';
+  }
+
+  /* ---- validazione ---- */
+  function validaCampi() {
+    if (!el.prov.value) return 'Seleziona la provincia.';
+    if (!el.com.value)  return 'Seleziona il comune.';
+    if (!el.ind.value.trim()) return "Inserisci l'indirizzo dell'intervento.";
+    return '';
+  }
+
+  /* ---- PDF ---- */
+  function generaPdf(save) {
+    const errore = validaCampi();
+    el.err.textContent = errore;
+    if (errore) return null;
+
+    const r = calcola();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const W = 210, M = 18;
+    const oggi = new Date();
+    const rif = 'EG-' + oggi.getFullYear() + String(oggi.getMonth() + 1).padStart(2, '0') +
+                String(oggi.getDate()).padStart(2, '0') + '-' + String(Math.floor(Math.random() * 900) + 100);
+
+    /* intestazione */
+    doc.setFillColor(29, 59, 42);
+    doc.rect(0, 0, W, 34, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(22);
+    doc.text('EDILGARDEN', M, 17);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5);
+    doc.setTextColor(168, 212, 159);
+    doc.text('Giardinaggio e manutenzione del verde — Roma e provincia', M, 24.5);
+
+    /* titolo */
+    let y = 48;
+    doc.setTextColor(29, 59, 42);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(16);
+    doc.text('Preventivo abbonamento mensile', M, y);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5);
+    doc.setTextColor(108, 113, 102);
+    doc.text('Rif. ' + rif + '   ·   Data ' + oggi.toLocaleDateString('it-IT'), M, y + 6);
+
+    /* dati servizio */
+    y += 18;
+    doc.setDrawColor(217, 214, 202); doc.setFillColor(244, 242, 236);
+    doc.roundedRect(M, y, W - M * 2, 34, 2, 2, 'FD');
+    doc.setFontSize(8.5); doc.setTextColor(61, 122, 78); doc.setFont('helvetica', 'bold');
+    doc.text('DATI DEL SERVIZIO', M + 6, y + 8);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(27, 33, 26);
+    doc.text('Comune:', M + 6, y + 16);
+    doc.text(r.comune + ' (' + el.prov.value + ')', M + 34, y + 16);
+    doc.text('Indirizzo:', M + 6, y + 22.5);
+    doc.text(doc.splitTextToSize(el.ind.value.trim(), 130)[0], M + 34, y + 22.5);
+    doc.text('Superficie:', M + 6, y + 29);
+    doc.text(r.mq + ' m² di prato', M + 34, y + 29);
+
+    /* dettaglio calcolo */
+    y += 46;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(61, 122, 78);
+    doc.text('DETTAGLIO DEL CALCOLO', M, y);
+    y += 8;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10.5); doc.setTextColor(27, 33, 26);
+
+    const riga = (label, valore, bold) => {
+      doc.setFont('helvetica', bold ? 'bold' : 'normal');
+      doc.text(label, M, y);
+      doc.text(valore, W - M, y, { align: 'right' });
+      y += 7;
+      doc.setDrawColor(232, 229, 219);
+      doc.line(M, y - 3, W - M, y - 3);
+    };
+
+    riga('Diritto fisso di chiamata', euro(CFG.chiamata));
+    riga('Superficie ' + r.mq + ' m² × ' + euro(CFG.prezzoMq) + '/m²', euro(r.superficie));
+    if (r.zonaBase) {
+      riga('Zona operativa base (' + r.comune + ')', 'nessuna maggiorazione');
+    } else {
+      riga('Maggiorazione zona 15%', '+ ' + euro(r.magg));
+    }
+    riga('Totale canone mensile', euro(r.pieno), true);
+
+    if (r.sconto > 0) {
+      doc.setTextColor(61, 122, 78);
+      riga('Sconto codice ' + CFG.codice + ' (10%)', '− ' + euro(r.sconto));
+      doc.setTextColor(27, 33, 26);
+    }
+
+    /* box totale */
+    y += 6;
+    const boxH = r.sconto > 0 ? 34 : 26;
+    doc.setFillColor(29, 59, 42);
+    doc.roundedRect(M, y, W - M * 2, boxH, 2, 2, 'F');
+    doc.setTextColor(168, 212, 159); doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
+    doc.text('IMPORTO MENSILE', M + 8, y + 9);
+
+    if (r.sconto > 0) {
+      /* prezzo pieno barrato */
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(12);
+      doc.setTextColor(200, 210, 200);
+      const oldTxt = euro(r.pieno);
+      const oldW = doc.getTextWidth(oldTxt);
+      doc.text(oldTxt, W - M - 8 - oldW, y + 12);
+      doc.setDrawColor(200, 210, 200); doc.setLineWidth(0.5);
+      doc.line(W - M - 8 - oldW, y + 11, W - M - 8, y + 11);
+      doc.setLineWidth(0.2);
+      /* prezzo scontato */
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(22); doc.setTextColor(255, 255, 255);
+      doc.text(euro(r.finale) + ' /mese', W - M - 8, y + 26, { align: 'right' });
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(168, 212, 159);
+      doc.text('Codice ' + CFG.codice + ' applicato', M + 8, y + 26);
+    } else {
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(22); doc.setTextColor(255, 255, 255);
+      doc.text(euro(r.finale) + ' /mese', W - M - 8, y + 19, { align: 'right' });
+    }
+
+    /* incluso */
+    y += boxH + 14;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(61, 122, 78);
+    doc.text("L'ABBONAMENTO COMPRENDE", M, y);
+    y += 7;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(27, 33, 26);
+    [
+      'Tosatura del prato con attrezzatura professionale e raccolta dello sfalcio',
+      'Piccole potature di alberature di altezza fino a 1 metro',
+      'Sopralluogo gratuito prima dell\'avvio del servizio'
+    ].forEach(t => { doc.text('•  ' + t, M, y); y += 6.5; });
+
+    /* note */
+    y += 6;
+    doc.setFontSize(8.5); doc.setTextColor(108, 113, 102);
+    const note = doc.splitTextToSize(
+      'Preventivo indicativo generato automaticamente dal sito edilgarden.it sulla base dei dati inseriti dall\'utente. ' +
+      'Non costituisce offerta contrattuale: l\'importo definitivo sarà confermato dopo il sopralluogo tecnico gratuito. ' +
+      'Validità della quotazione: 30 giorni dalla data di emissione. Eventuale IVA di legge da applicare in fattura.',
+      W - M * 2);
+    doc.text(note, M, y);
+
+    /* piè di pagina */
+    doc.setDrawColor(217, 214, 202);
+    doc.line(M, 278, W - M, 278);
+    doc.setFontSize(8.5); doc.setTextColor(61, 122, 78);
+    doc.text('Edilgarden — ' + EMAIL_QUOTE + ' — ' + PHONE, M, 284);
+    doc.text('Roma e provincia', W - M, 284, { align: 'right' });
+
+    const nomeFile = 'Preventivo-Edilgarden-' + r.comune.replace(/[^a-zA-Z0-9]/g, '') + '-' + rif + '.pdf';
+    if (save) doc.save(nomeFile);
+    return { doc, r, nomeFile };
+  }
+
+  /* ---- invio via email ---- */
+  function inviaMail() {
+    const out = generaPdf(true);   // il PDF viene prima scaricato, poi si allega alla mail
+    if (!out) return;
+    const { r, nomeFile } = out;
+
+    const corpo =
+      'Buongiorno ho provato il preventivatore sul vostro sito e sarei interessato a richiedere un sopralluogo per confermare la quotazione del preventivo.\n\n' +
+      '--- Dati del preventivo ---\n' +
+      'Provincia: ' + el.prov.value + '\n' +
+      'Comune: ' + r.comune + '\n' +
+      'Indirizzo: ' + el.ind.value.trim() + '\n' +
+      'Superficie prato: ' + r.mq + ' m²\n' +
+      'Diritto fisso di chiamata: ' + euro(CFG.chiamata) + '\n' +
+      'Superficie: ' + euro(r.superficie) + '\n' +
+      (r.zonaBase ? 'Zona operativa base: nessuna maggiorazione\n'
+                  : 'Maggiorazione zona 15%: ' + euro(r.magg) + '\n') +
+      (r.sconto > 0
+        ? 'Canone pieno: ' + euro(r.pieno) + '\nSconto codice ' + CFG.codice + ' (10%): -' + euro(r.sconto) + '\n'
+        : '') +
+      'CANONE MENSILE: ' + euro(r.finale) + '\n\n' +
+      'In allegato il PDF del preventivo (' + nomeFile + '), appena scaricato sul mio dispositivo.\n\n' +
+      'Nome e cognome: \nTelefono: \n';
+
+    window.location.href = 'mailto:' + EMAIL_QUOTE +
+      '?subject=' + encodeURIComponent('Richiesta sopralluogo — Preventivo abbonamento mensile') +
+      '&body=' + encodeURIComponent(corpo);
+
+    el.err.style.color = '#a8d49f';
+    el.err.textContent = 'PDF scaricato: allegalo alla mail che si è aperta.';
+    setTimeout(() => { el.err.style.color = ''; el.err.textContent = ''; }, 9000);
+  }
+
+  /* ---- costruzione + eventi ---- */
+  function build() {
+    container.innerHTML = template;
+
+    el = {
+      prov: document.getElementById('qProv'),
+      com: document.getElementById('qCom'),
+      ind: document.getElementById('qInd'),
+      indCount: document.getElementById('qIndCount'),
+      mq: document.getElementById('qMq'),
+      mqOut: document.getElementById('qMqOut'),
+      code: document.getElementById('qCode'),
+      codeBtn: document.getElementById('qCodeBtn'),
+      codeMsg: document.getElementById('qCodeMsg'),
+      lineMq: document.getElementById('qLineMq'),
+      valMq: document.getElementById('qValMq'),
+      lineZona: document.getElementById('qLineZona'),
+      valZona: document.getElementById('qValZona'),
+      lineSconto: document.getElementById('qLineSconto'),
+      valSconto: document.getElementById('qValSconto'),
+      old: document.getElementById('qOld'),
+      total: document.getElementById('qTotal'),
+      err: document.getElementById('qErr')
+    };
+
+    el.prov.addEventListener('change', () => {
+      const lista = COMUNI[el.prov.value];
+      if (!lista) {
+        el.com.innerHTML = '<option value="">Prima scegli la provincia</option>';
+        el.com.disabled = true;
+      } else {
+        el.com.innerHTML = '<option value="">Seleziona il comune…</option>' +
+          lista.split(',').map(c => '<option value="' + c + '">' + c + '</option>').join('');
+        el.com.disabled = false;
+      }
+      aggiorna();
+    });
+
+    el.com.addEventListener('change', () => { el.err.textContent = ''; aggiorna(); });
+    el.mq.addEventListener('input', aggiorna);
+    el.ind.addEventListener('input', () => {
+      el.indCount.textContent = el.ind.value.length;
+      el.err.textContent = '';
+    });
+
+    function applicaCodice() {
+      const v = el.code.value.trim().toUpperCase();
+      if (!v) {
+        scontoAttivo = false;
+        el.codeMsg.className = 'promo-msg';
+        el.codeMsg.textContent = '';
+      } else if (v === CFG.codice) {
+        scontoAttivo = true;
+        el.codeMsg.className = 'promo-msg ok';
+        el.codeMsg.textContent = '✓ Codice valido: sconto del 10% applicato al canone.';
+      } else {
+        scontoAttivo = false;
+        el.codeMsg.className = 'promo-msg ko';
+        el.codeMsg.textContent = 'Codice non riconosciuto. Controlla e riprova.';
+      }
+      aggiorna();
+    }
+    el.codeBtn.addEventListener('click', applicaCodice);
+    el.code.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applicaCodice(); } });
+
+    document.getElementById('qPdf').addEventListener('click', () => generaPdf(true));
+    document.getElementById('qMail').addEventListener('click', inviaMail);
+
+    aggiorna();
+    built = true;
+  }
+
+  return {
+    toggle(btn) {
+      if (!built) build();
+      const aperto = container.classList.toggle('open');
+      btn.setAttribute('aria-expanded', aperto);
+      btn.innerHTML = aperto
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg> Chiudi il preventivatore'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h4"/></svg> Apri il preventivatore';
+      if (aperto) {
+        setTimeout(() => container.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
+      }
+    }
+  };
+})();
+
+document.getElementById('openQuote').addEventListener('click', function () {
+  QuoteApp.toggle(this);
+});
+</script>
+
+</body>
+</html>
